@@ -3,9 +3,16 @@ package model.bean;
 public class Results {
 	private int reaultId;
 	private int classId;
+	private String className;
 	private int userId;
 	private int status;
 	
+	public String getClassName() {
+		return className;
+	}
+	public void setClassName(String  className) {
+		this.className = className;
+	}
 	public int getReaultId() {
 		return reaultId;
 	}
@@ -28,6 +35,15 @@ public class Results {
 		return status;
 	}
 	public void setStatus(int status) {
+		this.status = status;
+	}
+	
+	public Results(int reaultId, int classId, String className, int userId, int status) {
+		super();
+		this.reaultId = reaultId;
+		this.classId = classId;
+		this.className = className;
+		this.userId = userId;
 		this.status = status;
 	}
 	public Results(int reaultId, int classId, int userId, int status) {

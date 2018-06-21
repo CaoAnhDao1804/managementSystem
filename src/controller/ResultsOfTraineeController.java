@@ -10,23 +10,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
-import model.bean.Classes;
-import model.bean.ScheduleOfTrainee;
+import model.bean.Results;
 import model.bo.UserBo;
 
 /**
- * Servlet implementation class ScheduleOfTraineeController
+ * Servlet implementation class ResultsOfTraineeController
  */
-@WebServlet("/trainee/schedule")
-public class ScheduleOfTraineeController extends HttpServlet {
+@WebServlet("/trainee/results")
+public class ResultsOfTraineeController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private UserBo userBo; 
+	private UserBo userBo;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ScheduleOfTraineeController() {
+    public ResultsOfTraineeController() {
         super();
         userBo = new UserBo();
         // TODO Auto-generated constructor stub
@@ -37,14 +35,13 @@ public class ScheduleOfTraineeController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		String user_id = (String) request.getParameter("user_id");
-		int id = Integer.parseInt(user_id);
-		ArrayList<ScheduleOfTrainee> listClass = userBo.getClassOfTrainee(id);
-		request.setAttribute("listClass", listClass);
-		RequestDispatcher rd=request.getRequestDispatcher("/admin/trainee/scheduleoftrainee.jsp");
+		int trainee_id = Integer.valueOf((String)request.getParameter("user_id"));
+		ArrayList<Results> listResult = userBo.getResultOfTrainee(trainee_id);
+		request.setAttribute("listResults", listResult);
+		RequestDispatcher rd=request.getRequestDispatcher("/admin/trainee/resultoftrainee.jsp");
 		rd.forward(request, response);
 		
-		
+	
 		
 		
 	}

@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 import libralies.ConnectDBLibrary;
 import model.bean.Classes;
+import model.bean.Results;
+import model.bean.ScheduleOfTrainee;
 import model.bean.User;
 
 public class UserDao {
@@ -72,33 +74,121 @@ public class UserDao {
 		return listUser;
 	}
 	
-	public ArrayList<Classes> getClassesOfTrainee( int user_id ){
-		
-		ArrayList<Classes> listClasses = new ArrayList<Classes>();
+	public String getFullName(int user_id){
+		String fullname ="";
+
 		try {
 			conn = ConnectDBLibrary.getConnection();
 			System.out.println("Connect 2!");
 			
-			String sql = "SELECT classes.class_id ,classes.name, trainer_id , classes.created_at, time_of_date, date_of_week , count_lesson, room_id FROM learning  INNER JOIN classes on learning.class_id = classes.class_id INNER JOIN users ON users.user_id = learning.user_id WHERE learning.user_id = ?";
+			String sql = "Select * from users where user_id = ?";
+			System.out.println(sql);
+			pst = conn.prepareStatement(sql);
+			pst.setInt(1, user_id);
+			rs = pst.executeQuery();
+			while (rs.next()){
+				fullname = rs.getString(1);
+				return fullname;
+			}
+		}
+		 catch (Exception e) {
+		}
+			 
+			return fullname;
+			
+		
+	}
+	public ArrayList<Results> getResultOfTrainee (int user_id){
+		ArrayList<Results> listResult = new ArrayList<Results>();
+		try {
+			conn = ConnectDBLibrary.getConnection();
+			System.out.println("Connect 2!");
+			
+			String sql = "select results.class_id , classes.name , results.status from results , classes where results.class_id = classes.class_id and user_id= ? ";
 			System.out.println(sql);
 			pst = conn.prepareStatement(sql);
 			pst.setInt(1, user_id);
 			rs = pst.executeQuery();
 			
 			while (rs.next()) {
-				Classes classes= new Classes();
-				classes.setClassId(rs.getInt(1));
-				System.out.println(rs.getInt(1));
+				Results results = new Results();
+				results.setClassId(rs.getInt(1));
+				results.setClassName(rs.getString(2));
+				results.setStatus(rs.getInt(3));
 				
-				classes.setName(rs.getString(2));
-				System.out.println(rs.getString(2));
+				listResult.add(results);		
+			}		
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return listResult;
+	}
+		
+	public ArrayList<ScheduleOfTrainee> getClassesOfTrainee( int user_id ){
+		
+		ArrayList<ScheduleOfTrainee> listClasses = new ArrayList<ScheduleOfTrainee>();
+		try {
+			conn = ConnectDBLibrary.getConnection();
+			System.out.println("Connect 2!");
+			
+			String sql = "SELECT classes.class_id, classes.name, trainer_id ,time_of_date, date_of_week , count_lesson, room_id FROM learning  INNER JOIN classes on learning.class_id = classes.class_id INNER JOIN users ON users.user_id = learning.user_id WHERE learning.user_id = ?";
+			System.out.println(sql);
+			pst = conn.prepareStatement(sql);
+			pst.setInt(1, user_id);
+			rs = pst.executeQuery();
+			
+			while (rs.next()) {
+				ScheduleOfTrainee scheduleOfTrainee = new ScheduleOfTrainee();
+				scheduleOfTrainee.setClassid(rs.getInt(1));
+				scheduleOfTrainee.setNameClass(rs.getString(2));
+				int idTrainer = rs.getInt(3);
+				String fullnameTrainer ="";
+
 				
-				classes.setTrainerId(rs.getInt(3));
-				System.out.println(rs.getInt(3));
-				classes.setCreateAt(rs.getDate(4));
-				System.out.println(rs.getDate(4));
-				classes.setTimeOfDate(rs.getString(5));
-				String str = rs.getString(6);
+				try {
+					String sql1 = "Select fullname from users where user_id = ?";
+					System.out.println(sql1);
+					PreparedStatement pst1 = conn.prepareStatement(sql1);
+					pst1.setInt(1, idTrainer);
+					ResultSet rs1 = pst1.executeQuery();
+					if (rs1.next()) {
+						fullnameTrainer = rs1.getString(1);
+						scheduleOfTrainee.setNameTrainer(fullnameTrainer);
+					}
+						
+					
+				} catch (Exception e) {
+					scheduleOfTrainee.setNameTrainer(String.valueOf(idTrainer));
+				}
+				int idRoom = rs.getInt(7);
+				String nameRoom ="";
+				scheduleOfTrainee.setNameRoom(String.valueOf(idRoom));
+
+				try {
+					String sql2 = "Select name from rooms where room_id = ?";
+					System.out.println(sql2);
+					PreparedStatement pst2 = conn.prepareStatement(sql2);
+					pst2.setInt(1, idRoom);
+					ResultSet rs2 = pst2.executeQuery();
+					
+					if (rs2.next()) {
+						nameRoom = rs2.getString(1);
+						scheduleOfTrainee.setNameRoom(nameRoom);
+					}
+						
+					
+				} catch (Exception e) {
+					scheduleOfTrainee.setNameRoom(String.valueOf(idRoom));
+				}
+				
+				
+				scheduleOfTrainee.setTimeofday(rs.getString(4));
+				scheduleOfTrainee.setCountLession(rs.getInt(6));
+				
+				
+				String str = rs.getString(5);
 				String s =""; 
           	 	String arr[] =str.split(",");
               	 for(int i=0; i<arr.length;i++){
@@ -150,17 +240,12 @@ public class UserDao {
               			 s+=".";
               		 }
           	 	}
-				classes.setDateOfWeek(s);
-				classes.setCountLession(rs.getInt(7));
-				classes.setRoomId(rs.getInt(8));
+				scheduleOfTrainee.setDateofweek(s);
 				
-				listClasses.add(classes);				
+				listClasses.add(scheduleOfTrainee);				
 			}
 			System.out.println(listClasses.size());
-			for (Classes l1 : listClasses){
-				System.out.println("Cac lop lay duoc: ");
-              	System.out.print(l1.getClassId());
-			}
+			
 			
 			
 			

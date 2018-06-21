@@ -14,6 +14,8 @@
         </div>
         <div class="card-footer small text-muted">
           <a href="/managementSystem/trainee/schedule?user_id=4"> Schedule Of trainee </a>
+		  <a href="/managementSystem/trainee/results?user_id=4"> Result Of trainee </a>
+          
         </div>
         <div class="card-footer small text-muted">
           Updated yesterday at 11:59 PM

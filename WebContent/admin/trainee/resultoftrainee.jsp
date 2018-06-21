@@ -1,4 +1,5 @@
 
+<%@page import="model.bean.Results"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import ="model.bean.ScheduleOfTrainee"%>;
 %>
@@ -11,7 +12,7 @@
     <div class="card mb-3">
         <div class="card-header">
           <i class="fa fa-table"></i>
-          Lịch học của bạn
+          Result of Trainee
         </div>
         <script type="text/javascript">
             $(document).ready(function(){
@@ -51,37 +52,33 @@
                   <thead>
                     <tr>
                        <th>No.</th>
-                      <th >Class  </th>
-                      <th >Room </th>
-                      <th >Trainer </th>
-                      <th>Time </th>
-                      <th >Day</th>
-                      <th >Count Lession </th>
-                      <th>Action</th>
+                      <th >Class Name  </th>
+                      <th >Result </th>
+                   
                       
                     </tr>
                   </thead>
                   <tbody>
                   <%
                 
-                  	ArrayList<ScheduleOfTrainee> listClass = (ArrayList<ScheduleOfTrainee>) request.getAttribute("listClass");
+                  	ArrayList<Results> listResults = (ArrayList<Results>) request.getAttribute("listResults");
                   	int i=0;
-                  	for (ScheduleOfTrainee sched : listClass){
+                  	for (Results results : listResults){
                   		i+=1;
+                  		String res= "";
+                  		if (results.getStatus()==0){
+                  			 res = "Pass";
+                  		}
+                  		else {
+                  			res = "Fail";
+                  		}
                   %>
                   
                   <tr>
                   <td><%= i %></td>
-                  <td><%= sched.getNameClass()%></td>
-                  <td><%= sched.getNameRoom()%></td>
-                  <td><%= sched.getNameTrainer()%></td>
-                  <td><%= sched.getTimeofday()%></td>
+                  <td><%= results.getClassName()%></td>
+                  <td><%= res%></td>
                   
-                  <td><%= sched.getDateofweek()%></td> 
-                  <td><%= sched.getCountLession() %>
-                  
-            
-                  <td> <a href="/managementSystem/trainee/list?class_id=<%= sched.getClassid() %>"> See list trainee of class </a>
                   </tr>
                   <%
                   	}
